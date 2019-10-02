@@ -7,7 +7,7 @@ module.exports = function(req, res, next) {
     if (!token) return res.status(401).send({error: "Unauthorized. Token not found."})
 
     try {
-        const decoded = jwt.verify(token, process.env.TOKEN_SCRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded.user;
         next();
     } catch (error) {

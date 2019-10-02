@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 //custom imports
-const auth = require('./routes/auth');
+const users = require('./routes/users');
+const auth = require('./routes/auth')
 
 dotenv.config()
 const port = process.env.port || 3000;
@@ -19,8 +20,10 @@ mongoose.connect(
 
 //middleware
   //body parsing
-  app.use(express.json())
-app.use('/', auth)
+  app.use(express.json());
+//routes
+app.use('/', users);
+app.use('/', auth);
 
-app.get('/', (req, res) => res.send('Hello World!'))
-app.listen(port, () => console.log(`Example app listening on port ${port}!`)) 
+// app.get('/', (req, res) => res.send('Hello World!'));
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
