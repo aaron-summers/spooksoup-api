@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 //custom imports
 const User = require("../models/User");
-const { loginValidation, signupValidation } = require("../validation");
+const { signupValidation } = require("../validation");
 
 //check for existing username
 const checkUsername = reqUsername => {
