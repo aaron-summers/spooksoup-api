@@ -10,9 +10,9 @@
  const {loginValidation} = require('../validation');
  
 //token authorization
-router.get('/auth', verification, async (req, res) => {
+router.get('/auth/verify', verification, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select("-password -__v");
+    const user = await User.findById(req.user.id).select("-password -__v -posts");
     res.send(user);
   } catch (error) {
     res.status(401).send({error: 'Oops! Something went wrong. Please try again.'})

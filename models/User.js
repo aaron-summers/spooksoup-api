@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema({
         type: String, 
         required: true,
         min: 6
+    },
+    date: {
+        type: Date, 
+        default: Date.now()
     }
 })
 
