@@ -35,6 +35,36 @@ router.post('/posts/:id/comments', verification, async (req, res) => {
     }
 });
 
+router.get("/post/:id/comments", verification, async (req, res) => {
+  if (!req.params.id)
+    return res.status(400).send({ error: "Invalid parameters." });
+
+  const post = await Post.findById(req.params.id).select("-comments -__v");
+  if (!post) return res.status(404).send({ error: "Content not found." });
+
+  try {
+
+    const postComments = await Comment.aggregate([
+        { $match: { post: post._id } },
+        { $sort: { date: -1 } },
+        {
+        $facet: {
+            comments: [
+            { $skip: parseInt(req.query.offset) },
+            { $limit: 2 },
+            { $project: { _id: 1, content: 1, user: 1, replies: 1 } }
+            ]
+        }
+        }
+    ]);
+
+    res.status(200).send(...postComments);
+
+  } catch (error) {
+    res.status(500).send({ error: "Internal server error." });
+  }
+});
+
 //delete comment if it belongs to req.user
 router.patch('/posts/:postId/comments/:commentId', verification, async (req, res) => {
     if (!req.params.postId) return res.status(400).send({ error: "Invalid parameters." });
