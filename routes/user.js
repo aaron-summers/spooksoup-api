@@ -11,7 +11,7 @@ router.get('/user/profile', verification, async (req, res) => {
         const current_user = await User.findById(req.user.id)
           .select("-password -__v");
 
-        if (!current_user) return res.status(401).send({error: "User not found."});
+        if (!current_user) return res.status(401).send({error: "Unauthorized request."});
 
         res.send(current_user)
 
@@ -25,9 +25,9 @@ router.get('/posts', verification, async (req, res) => {
     try {
         const current_user = await User.findById(req.user.id).select("-password -__v");
 
-        if (!current_user) return res.status(401).send({error: "User not found."});
+        if (!current_user) return res.status(401).send({error: "Unauthorized request."});
 
-        const userPosts = await Post.find({user: current_user._id}).select("id title content");
+        const userPosts = await Post.find({user: current_user._id}).select("id title content likes comments");
 
         res.send({data: [{user: current_user, posts: userPosts}]})
 

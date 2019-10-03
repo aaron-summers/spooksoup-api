@@ -12,13 +12,14 @@ router.get('/dashboard', verification, async (req, res) => {
     try {
         const current_user = await User.findById(req.user.id).select("-password -__v -email");
 
-        if (!current_user) return res.status(401).send({error: "User not found."});
+        if (!current_user) return res.status(401).send({error: "Unauthorized request."});
+        if (!req.query.postOffset) return res.status(206).send([{user: current_user}, {error: "Couldn\'t fetch posts at this time."}])
 
         const userPosts = await Post.aggregate([
             { $match: {"user": current_user._id} },
             { $sort: {"date": -1} },
-            {$facet: {
-                posts: [{$skip: parseInt(req.query.offset)}, {$limit: 10}, {$project: {_id: 1, title: 1, content: 1}}]
+            { $facet: {
+                posts: [{$skip: parseInt(req.query.postOffset)}, {$limit: 10}, {$project: {_id: 1, title: 1, content: 1}}]
             }
         }])
 

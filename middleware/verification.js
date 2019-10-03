@@ -4,7 +4,7 @@ module.exports = function(req, res, next) {
     //extract token
     const token = req.header('Authorization');
 
-    if (!token) return res.status(401).send({error: "Unauthorized. Token not found."})
+    if (!token) return res.status(401).send({error: "Unauthorized. No Token Provided."})
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);

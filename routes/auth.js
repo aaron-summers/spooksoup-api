@@ -15,7 +15,7 @@ router.get('/auth/verify', verification, async (req, res) => {
     const user = await User.findById(req.user.id).select("-password -__v -posts");
     res.send(user);
   } catch (error) {
-    res.status(401).send({error: 'Oops! Something went wrong. Please try again.'})
+    res.status(401).send({error: 'Invalid Token.'})
   }
 });
 
@@ -31,11 +31,11 @@ router.post('/auth', async (req, res) => {
     
     if (req.body.username) user = await User.findOne({ username: req.body.username });
 
-    if (!user) return res.status(400).send({error: "Invalid Username."});
+    if (!user) return res.status(401).send({error: "Unauthorized. Invalid Credentials."});
 
     const isAuthenticated = await bcrypt.compare(req.body.password, user.password);
 
-    if (!isAuthenticated) return res.send(400).send({error: "Invalid password."})
+    if (!isAuthenticated) return res.send(401).send({error: "Invalid Credentials."})
 
     const payload = {
       user: {

@@ -28,14 +28,14 @@ router.post("/signup", async (req, res) => {
   // validation
   const isUsernameTaken = await checkUsername(req.body.username);
   if (isUsernameTaken) {
-    return res.status(400).send({ error: "This username is taken." });
+    return res.status(409).send({ error: "This username is taken." });
   }
 
   try {
     let user = await checkEmail(req.body.email);
     if (user) {
       return res
-        .status(400)
+        .status(409)
         .send({ error: "The email you entered is already in use." });
     }
 
@@ -70,7 +70,7 @@ router.post("/signup", async (req, res) => {
       }
     );
   } catch (error) {
-    res.status(400).send("Oops! Something went wrong.");
+    res.status(500).send("Oops! Something went wrong.");
   }
 });
 
