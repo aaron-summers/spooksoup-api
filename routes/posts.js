@@ -6,6 +6,7 @@ const validator = require('validator');
 const verification = require('../middleware/verification');
 const User = require('../models/User');
 const Post = require('../models/Post');
+const Like = require('../models/Like');
 
 //create a post
 router.post('/posts', verification, async (req, res) => {
@@ -85,33 +86,40 @@ router.delete('/posts/:id', verification, async (req, res) => {
     }
 });
 
-//like or unlike a post
-router.patch('/posts/:id/like', verification, async (req, res) => {
+//create or remove like and update post likes
+router.patch("/posts/:id/like", verification, async (req, res) => {
+    if (!req.params.id) return res.status(400).send({ error: "Invalid parameters." });
+
     try {
         const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).send({ error: "Post not found." });
 
-        if (!post) return res.status(404).send({error: "Post not found."});
+        const likeExists = post.likes.find(like => like.user.toString() == req.user.id);
 
-        if (!req.params.id) return res.status(400).send({error: "Invalid parameters."});
+        if (!likeExists) {
+            const like = new Like({
+            user: req.user.id,
+            post: post.id
+            });
 
-        //if already liked, remove the like
-        if (post.likes.find(like => like.user.toString() === req.user.id)) {
+            await like.save();
+            post.likes.unshift(like);
+            await post.save();
 
+            res.status(200).send({ post, like: true });
+        } else {
+            await Like.findByIdAndDelete(likeExists.id);
             const postIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
-
             post.likes.splice(postIndex, 1);
             await post.save();
-            return res.status(200).send({post, message: "Post unliked"});
+
+            res.send({post, like: false});
         }
 
-        post.likes.unshift({ user: req.user.id});
-        await post.save();
-
-        res.status(200).send({post, message: "Post liked."})
-
     } catch (error) {
-        res.status(500).send({error: "Oops! Something went wrong."})
+        res.status(500).send({error: "Internal Server Error."})
     }
-})
+
+});
 
 module.exports = router;

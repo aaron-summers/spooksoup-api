@@ -13,7 +13,7 @@ const postSchema = new mongoose.Schema({
   },
   user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users'
+      ref: 'user'
   },
   username: {
     type: String
@@ -21,22 +21,12 @@ const postSchema = new mongoose.Schema({
   likes: [{
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users'
+      ref: 'user'
     }
   }],
   comments: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'users'
-    },
-    content: {
-      type: String, 
-      required: true
-    },
-    date: {
-      type: Date,
-      default: Date.now()
-    }
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'comment'
   }],
   date: {
     type: Date, 
