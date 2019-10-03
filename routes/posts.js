@@ -32,7 +32,7 @@ router.post('/posts', verification, async (req, res) => {
         //the following two lines will probably not be scalable
         // user.posts.push(post._id);
         // await user.save();
-        res.send(post);
+        res.status(201).send(post);
 
     } catch (error) {
         res.status(500).send({error: "Oops! Something went wrong."})
@@ -94,21 +94,21 @@ router.patch("/posts/:id/like", verification, async (req, res) => {
         const post = await Post.findById(req.params.id);
         if (!post) return res.status(404).send({ error: "Post not found." });
 
-        const likeExists = post.likes.find(like => like.user.toString() == req.user.id);
+        const existingLike = post.likes.find(like => like.user.toString() == req.user.id);
 
-        if (!likeExists) {
+        if (!existingLike) {
             const like = new Like({
-            user: req.user.id,
-            post: post.id
+                user: req.user.id,
+                post: post.id
             });
 
             await like.save();
             post.likes.unshift(like);
             await post.save();
 
-            res.status(200).send({ post, like: true });
+            res.status(201).send({ post, like: true });
         } else {
-            await Like.findByIdAndDelete(likeExists.id);
+            await Like.findByIdAndDelete(existingLike.id);
             const postIndex = post.likes.map(like => like.user.toString()).indexOf(req.user.id);
             post.likes.splice(postIndex, 1);
             await post.save();

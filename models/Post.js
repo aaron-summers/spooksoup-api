@@ -25,8 +25,10 @@ const postSchema = new mongoose.Schema({
     }
   }],
   comments: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'comment'
+    comment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'comment'
+    }
   }],
   date: {
     type: Date, 

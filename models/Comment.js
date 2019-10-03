@@ -15,8 +15,10 @@ const commentSchema = new mongoose.Schema({
     ref: 'post'
   },
   replies: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'comment'
+    comment: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'comment'
+    }
   }],
   date: {
     type: Date,
