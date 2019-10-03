@@ -21,7 +21,7 @@ router.get('/user/profile', verification, async (req, res) => {
 })
 
 //get all posts from current user
-router.get('/user/posts', verification, async (req, res) => {
+router.get('/posts', verification, async (req, res) => {
     try {
         const current_user = await User.findById(req.user.id).select("-password -__v");
 
@@ -29,7 +29,7 @@ router.get('/user/posts', verification, async (req, res) => {
 
         const userPosts = await Post.find({user: current_user._id}).select("id title content");
 
-        res.send({data: [{user: current_user}, {posts: userPosts}]})
+        res.send({data: [{user: current_user, posts: userPosts}]})
 
     } catch (error) {
         console.log(error)

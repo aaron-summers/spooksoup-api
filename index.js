@@ -9,6 +9,7 @@ const users = require('./routes/users');
 const auth = require('./routes/auth')
 const current_user = require('./routes/user');
 const posts = require('./routes/posts');
+const dashboard = require('./routes/dashboard');
 
 dotenv.config()
 const port = process.env.port || 3000;
@@ -35,6 +36,7 @@ app.use('/', users);
 app.use('/', auth);
 app.use('/', current_user);
 app.use('/', posts);
+app.use('/', dashboard);
 
 
 // app.get('/', (req, res) => res.send('Hello World!'));
